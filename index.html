@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SwingKings</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --text: #e8eefc;
+      --muted: rgba(232, 238, 252, 0.7);
+      --accent: #6ee7b7;
+      --danger: #fb7185;
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 18px 50px rgba(0,0,0,0.35);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(900px 600px at 20% 10%, rgba(110,231,183,0.18), transparent 60%),
+                  radial-gradient(900px 600px at 80% 0%, rgba(56,189,248,0.16), transparent 60%),
+                  radial-gradient(900px 600px at 70% 90%, rgba(251,113,133,0.10), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+    }
+
+    .wrap {
+      width: min(980px, 100%);
+      display: grid;
+      gap: 18px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(110,231,183,0.9), rgba(56,189,248,0.85));
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo::after {
+      content: "";
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), transparent 45%);
+      transform: rotate(18deg);
+    }
+
+    .logo svg { position: relative; z-index: 1; }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0.2px;
+      line-height: 1.1;
+    }
+
+    .sub {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .chip {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .layout {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.045));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-h {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .card-h .title {
+      font-size: 15px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+    }
+
+    .card-h .hint {
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .card-b {
+      padding: 16px 18px 18px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.12);
+    }
+
+    .row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .label {
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+    }
+
+    .range {
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      padding: 6px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    select:focus {
+      border-color: rgba(110,231,183,0.6);
+      box-shadow: 0 0 0 4px rgba(110,231,183,0.15);
+    }
+
+    option { color: #0b1220; }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(110,231,183,0.95), rgba(56,189,248,0.85));
+      color: #07111f;
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .btn-danger {
+      background: rgba(251,113,133,0.14);
+      color: #ffd6de;
+      border: 1px solid rgba(251,113,133,0.25);
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .status strong { color: var(--text); }
+
+    .warn {
+      color: #ffd6de;
+      background: rgba(251,113,133,0.12);
+      border: 1px solid rgba(251,113,133,0.22);
+      padding: 10px 12px;
+      border-radius: 14px;
+      margin-top: 12px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .summary {
+      display: grid;
+      gap: 10px;
+    }
+
+    .pill {
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      border-radius: 16px;
+    }
+
+    .pill .k {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .pill .v {
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .odds {
+      font-variant-numeric: tabular-nums;
+      color: rgba(110,231,183,0.95);
+      font-weight: 700;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.35;
+    }
+
+    .footer {
+      margin-top: 10px;
+      color: rgba(232, 238, 252, 0.55);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .tiny {
+      font-size: 12px;
+      color: rgba(232, 238, 252, 0.55);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 20C8.2 16.1 10.2 13.8 12 13.2C14.7 12.3 17.5 14.5 20 9" stroke="rgba(7,17,31,0.95)" stroke-width="2.3" stroke-linecap="round"/>
+            <path d="M18.5 4.5V10.5" stroke="rgba(7,17,31,0.95)" stroke-width="2.3" stroke-linecap="round"/>
+            <path d="M18.5 4.5L21 6" stroke="rgba(7,17,31,0.95)" stroke-width="2.3" stroke-linecap="round"/>
+            <circle cx="6.4" cy="19.4" r="1.6" fill="rgba(7,17,31,0.95)"/>
+          </svg>
+        </div>
+        <div>
+          <h1>SwingKings</h1>
+          <p class="sub">Fantasy Draft Golf League</p>
+        </div>
+      </div>
+      <div class="chip" title="Demo data (replace with live odds feed later)">
+        <span>Demo tournament lineup</span>
+        <span style="width:6px;height:6px;border-radius:999px;background:rgba(110,231,183,0.9);"></span>
+        <span id="updatedAt">Ready</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Picker -->
+      <section class="card">
+        <div class="card-h">
+          <div class="title">Draft your 5 golfers</div>
+          <div class="hint">One pick per tier</div>
+        </div>
+        <div class="card-b">
+          <div class="grid">
+            <div class="row">
+              <div class="row-top">
+                <div class="label">Pick 1</div>
+                <div class="range">Odds rank 1–5</div>
+              </div>
+              <select id="pick1" aria-label="Pick 1 (Odds rank 1–5)"></select>
+            </div>
+
+            <div class="row">
+              <div class="row-top">
+                <div class="label">Pick 2</div>
+                <div class="range">Odds rank 6–10</div>
+              </div>
+              <select id="pick2" aria-label="Pick 2 (Odds rank 6–10)"></select>
+            </div>
+
+            <div class="row">
+              <div class="row-top">
+                <div class="label">Pick 3</div>
+                <div class="range">Odds rank 11–20</div>
+              </div>
+              <select id="pick3" aria-label="Pick 3 (Odds rank 11–20)"></select>
+            </div>
+
+            <div class="row">
+              <div class="row-top">
+                <div class="label">Pick 4</div>
+                <div class="range">Odds rank 21–30</div>
+              </div>
+              <select id="pick4" aria-label="Pick 4 (Odds rank 21–30)"></select>
+            </div>
+
+            <div class="row">
+              <div class="row-top">
+                <div class="label">Pick 5</div>
+                <div class="range">Odds rank 31+</div>
+              </div>
+              <select id="pick5" aria-label="Pick 5 (Odds rank 31+)"></select>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn-primary" id="btnRank">Save List</button>
+            <button class="btn-ghost" id="btnRandom">Random Fill</button>
+            <button class="btn-danger" id="btnReset">Reset</button>
+          </div>
+
+          <div id="warning" class="warn" role="alert" aria-live="polite"></div>
+          <div class="status" id="status">
+            Tip: You can’t pick the same golfer twice. Your lineup is saved to this device.
+          </div>
+          <div class="tiny" id="testHint" style="display:none; margin-top:10px;">Test mode enabled (see console).</div>
+        </div>
+      </section>
+
+      <!-- Preview -->
+      <aside class="card">
+        <div class="card-h">
+          <div class="title">Lineup preview</div>
+          <div class="hint">Sorted by best odds</div>
+        </div>
+        <div class="card-b">
+          <div class="summary" id="summary"></div>
+          <div class="actions" style="margin-top: 14px;">
+            <button class="btn-primary" id="btnConfirmSend">Confirm &amp; Submit</button>
+          </div>
+          <p class="muted" style="margin: 12px 0 0;">
+            This is a starter UI using demo odds. Next step is wiring in a real odds source and tournament selection.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="footer">© <span id="year"></span> SwingKings — demo UI</div>
+  </div>
+
+  <script>
+    // Demo tournament lineup (replace with real odds feed later)
+    // rank: odds ranking position (1 = favorite)
+    // odds: example American odds
+    const lineup = [
+      { rank: 1, name: "Scottie Scheffler", odds: "+450" },
+      { rank: 2, name: "Rory McIlroy", odds: "+800" },
+      { rank: 3, name: "Jon Rahm", odds: "+900" },
+      { rank: 4, name: "Viktor Hovland", odds: "+1200" },
+      { rank: 5, name: "Xander Schauffele", odds: "+1400" },
+
+      { rank: 6, name: "Patrick Cantlay", odds: "+1600" },
+      { rank: 7, name: "Collin Morikawa", odds: "+1800" },
+      { rank: 8, name: "Ludvig Åberg", odds: "+2000" },
+      { rank: 9, name: "Max Homa", odds: "+2200" },
+      { rank: 10, name: "Justin Thomas", odds: "+2500" },
+
+      { rank: 11, name: "Tommy Fleetwood", odds: "+2800" },
+      { rank: 12, name: "Hideki Matsuyama", odds: "+3000" },
+      { rank: 13, name: "Jordan Spieth", odds: "+3300" },
+      { rank: 14, name: "Cameron Smith", odds: "+3500" },
+      { rank: 15, name: "Tony Finau", odds: "+4000" },
+      { rank: 16, name: "Wyndham Clark", odds: "+4000" },
+      { rank: 17, name: "Brooks Koepka", odds: "+4500" },
+      { rank: 18, name: "Tyrrell Hatton", odds: "+4500" },
+      { rank: 19, name: "Shane Lowry", odds: "+5000" },
+      { rank: 20, name: "Sam Burns", odds: "+5000" },
+
+      { rank: 21, name: "Sungjae Im", odds: "+5500" },
+      { rank: 22, name: "Cameron Young", odds: "+6000" },
+      { rank: 23, name: "Rickie Fowler", odds: "+6500" },
+      { rank: 24, name: "Brian Harman", odds: "+6500" },
+      { rank: 25, name: "Matt Fitzpatrick", odds: "+7000" },
+      { rank: 26, name: "Jason Day", odds: "+7000" },
+      { rank: 27, name: "Keegan Bradley", odds: "+7500" },
+      { rank: 28, name: "Si Woo Kim", odds: "+8000" },
+      { rank: 29, name: "Billy Horschel", odds: "+8000" },
+      { rank: 30, name: "Denny McCarthy", odds: "+9000" },
+
+      { rank: 31, name: "Min Woo Lee", odds: "+10000" },
+      { rank: 32, name: "Sepp Straka", odds: "+10000" },
+      { rank: 33, name: "Corey Conners", odds: "+11000" },
+      { rank: 34, name: "Russell Henley", odds: "+11000" },
+      { rank: 35, name: "Akshay Bhatia", odds: "+12500" },
+      { rank: 36, name: "Tom Kim", odds: "+12500" },
+      { rank: 37, name: "Will Zalatoris", odds: "+13000" },
+      { rank: 38, name: "Sahith Theegala", odds: "+13000" },
+      { rank: 39, name: "J.T. Poston", odds: "+15000" },
+      { rank: 40, name: "Alex Noren", odds: "+15000" },
+    ];
+
+    const tiers = [
+      { id: "pick1", min: 1, max: 5 },
+      { id: "pick2", min: 6, max: 10 },
+      { id: "pick3", min: 11, max: 20 },
+      { id: "pick4", min: 21, max: 30 },
+      { id: "pick5", min: 31, max: 999 },
+    ];
+
+    const LS_KEY = "swingkings_lineup_v1";
+
+    const $ = (sel) => document.querySelector(sel);
+    const picks = tiers.map((t) => ({ ...t, el: document.getElementById(t.id) }));
+
+    function nowStamp() {
+      const d = new Date();
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function optionLabel(p) {
+      return `#${p.rank} • ${p.name} (${p.odds})`;
+    }
+
+    function buildDropdowns() {
+      for (const t of picks) {
+        const options = lineup
+          .filter((p) => p.rank >= t.min && p.rank <= t.max)
+          .sort((a, b) => a.rank - b.rank);
+
+        t.el.innerHTML = "";
+
+        const ph = document.createElement("option");
+        ph.value = "";
+        ph.textContent = "Select a golfer…";
+        ph.disabled = false;
+        ph.selected = true;
+        t.el.appendChild(ph);
+
+        for (const p of options) {
+          const opt = document.createElement("option");
+          opt.value = String(p.rank);
+          opt.textContent = optionLabel(p);
+          t.el.appendChild(opt);
+        }
+      }
+
+      $("#updatedAt").textContent = `Updated ${nowStamp()}`;
+      $("#year").textContent = new Date().getFullYear();
+    }
+
+    function getSelections() {
+      return picks.map((t) => {
+        const rank = Number(t.el.value);
+        if (!rank) return null;
+        return lineup.find((p) => p.rank === rank) || null;
+      });
+    }
+
+    function validateUnique(sel) {
+      const ranks = sel.filter(Boolean).map((p) => p.rank);
+      const set = new Set(ranks);
+      return set.size === ranks.length;
+    }
+
+    function showWarning(msg) {
+      const w = $("#warning");
+      w.textContent = msg;
+      w.style.display = "block";
+    }
+
+    function clearWarning() {
+      const w = $("#warning");
+      w.textContent = "";
+      w.style.display = "none";
+    }
+
+    function renderPreview(sel) {
+      const box = $("#summary");
+      const chosen = sel.filter(Boolean).slice().sort((a, b) => a.rank - b.rank);
+
+      if (chosen.length === 0) {
+        box.innerHTML = `
+          <div class="pill">
+            <div class="k">No picks yet</div>
+            <div class="v"><span class="muted">Choose golfers on the left to preview here.</span></div>
+          </div>`;
+        return;
+      }
+
+      box.innerHTML = chosen
+        .map((p, idx) => {
+          return `
+          <div class="pill">
+            <div class="k">#${idx + 1} in your lineup</div>
+            <div class="v">
+              <span>${p.name}</span>
+              <span class="odds">${p.odds}</span>
+            </div>
+            <div class="muted">Odds rank: ${p.rank}</div>
+          </div>`;
+        })
+        .join("");
+    }
+
+    function save(sel) {
+      const payload = {
+        picks: sel.filter(Boolean).map((p) => ({ rank: p.rank, name: p.name, odds: p.odds })),
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(LS_KEY, JSON.stringify(payload));
+    }
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed?.picks?.length) return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    }
+
+    function applyLoaded(parsed) {
+      for (const t of picks) t.el.value = "";
+      for (const p of parsed?.picks || []) {
+        const tier = picks.find((t) => p.rank >= t.min && p.rank <= t.max);
+        if (tier) tier.el.value = String(p.rank);
+      }
+
+      const sel = getSelections();
+      renderPreview(sel);
+
+      const when = parsed?.savedAt ? new Date(parsed.savedAt) : null;
+      const stamp = when ? when.toLocaleString() : "";
+      $("#status").innerHTML = stamp
+        ? `Loaded saved lineup from <strong>${stamp}</strong>. Make changes anytime.`
+        : "Loaded saved lineup. Make changes anytime.";
+    }
+
+    function randomFill() {
+      clearWarning();
+      // Pick one random golfer per tier; ensure unique across tiers
+      const chosen = new Set();
+      for (const t of picks) {
+        const pool = lineup.filter((p) => p.rank >= t.min && p.rank <= t.max && !chosen.has(p.rank));
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        if (!pick) {
+          t.el.value = "";
+          continue;
+        }
+        chosen.add(pick.rank);
+        t.el.value = String(pick.rank);
+      }
+      renderPreview(getSelections());
+      $("#status").textContent = "Random lineup filled (not saved yet).";
+    }
+
+    function resetAll() {
+      clearWarning();
+      for (const t of picks) t.el.value = "";
+      localStorage.removeItem(LS_KEY);
+      renderPreview([]);
+      $("#status").textContent = "Reset complete. No lineup saved.";
+    }
+
+    function rankAndSave() {
+      clearWarning();
+      const sel = getSelections();
+      const filled = sel.filter(Boolean).length;
+
+      if (filled < 5) {
+        showWarning("Please make a selection in all 5 dropdowns before saving.");
+        renderPreview(sel);
+        return;
+      }
+
+      if (!validateUnique(sel)) {
+        showWarning("Duplicate golfer detected. Each golfer can only be selected once.");
+        renderPreview(sel);
+        return;
+      }
+
+      save(sel);
+      renderPreview(sel);
+      $("#status").innerHTML = "Saved! Your lineup is ranked by odds in the preview panel.";
+    }
+
+    function buildLineupText(sel) {
+      const chosen = sel.filter(Boolean).slice().sort((a, b) => a.rank - b.rank);
+      return chosen
+        .map((p, i) => `${i + 1}. ${p.name} (Rank #${p.rank}, ${p.odds})`)
+        .join("\n");
+    }
+
+    function confirmAndSend() {
+      clearWarning();
+      const sel = getSelections();
+      const filled = sel.filter(Boolean).length;
+
+      if (filled < 5) {
+        showWarning("Please make a selection in all 5 dropdowns before sending.");
+        renderPreview(sel);
+        return;
+      }
+
+      if (!validateUnique(sel)) {
+        showWarning("Duplicate golfer detected. Each golfer can only be selected once.");
+        renderPreview(sel);
+        return;
+      }
+
+      // Confirm step (soft) + save
+      save(sel);
+      renderPreview(sel);
+
+      const title = "SwingKings Lineup";
+      const text = buildLineupText(sel);
+      const message = `${title}\n\n${text}`;
+
+      // Best mobile experience: native share sheet
+      if (navigator.share) {
+        navigator
+          .share({ title, text: message })
+          .then(() => {
+            $("#status").innerHTML = "Sent! Your lineup was shared successfully.";
+          })
+          .catch(() => {
+            // User canceled or share failed — fall back to clipboard
+            if (navigator.clipboard?.writeText) {
+              navigator.clipboard
+                .writeText(message)
+                .then(() => {
+                  $("#status").innerHTML = "Share canceled. Lineup copied to clipboard instead.";
+                })
+                .catch(() => {
+                  window.prompt("Copy your lineup:", message);
+                });
+            } else {
+              window.prompt("Copy your lineup:", message);
+            }
+          });
+        return;
+      }
+
+      // Desktop / fallback: copy to clipboard
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard
+          .writeText(message)
+          .then(() => {
+            $("#status").innerHTML = "Copied! Paste your lineup wherever you want to send it.";
+          })
+          .catch(() => {
+            window.prompt("Copy your lineup:", message);
+          });
+      } else {
+        window.prompt("Copy your lineup:", message);
+      }
+    }
+
+    function onChange() {
+      clearWarning();
+      const sel = getSelections();
+
+      // If duplicates occur, we still allow the user to fix it, but show a warning.
+      if (!validateUnique(sel)) {
+        showWarning("Heads up: You picked the same golfer twice. Choose unique golfers.");
+      }
+
+      renderPreview(sel);
+      const filled = sel.filter(Boolean).length;
+      $("#status").textContent = filled === 0
+        ? "Tip: You can’t pick the same golfer twice. Your lineup is saved to this device."
+        : `Selected ${filled}/5. Click Save List when ready.`;
+    }
+
+    // -----------------
+    // Tiny in-browser tests (run with ?test=1)
+    // -----------------
+    function assert(name, condition) {
+      if (!condition) throw new Error(`Test failed: ${name}`);
+      console.log(`✅ ${name}`);
+    }
+
+    function runTests() {
+      console.log("Running SwingKings tests...");
+
+      // Test: buildLineupText formatting
+      const sampleSel = [
+        { rank: 2, name: "Rory McIlroy", odds: "+800" },
+        { rank: 1, name: "Scottie Scheffler", odds: "+450" },
+      ];
+      const txt = buildLineupText(sampleSel);
+      assert("buildLineupText uses newlines", txt.includes("\n"));
+      assert("buildLineupText sorts by rank", txt.indexOf("Rank #1") < txt.indexOf("Rank #2"));
+
+      // Test: validateUnique
+      assert("validateUnique true on unique", validateUnique([{ rank: 1 }, { rank: 2 }, null]));
+      assert("validateUnique false on dup", !validateUnique([{ rank: 1 }, { rank: 1 }, null]));
+
+      // Test: tier boundaries
+      const tier1 = picks.find((t) => t.id === "pick1");
+      const tier5 = picks.find((t) => t.id === "pick5");
+      assert("tier1 max is 5", tier1.max === 5);
+      assert("tier5 min is 31", tier5.min === 31);
+
+      console.log("All tests passed.");
+    }
+
+    // Init
+    buildDropdowns();
+    renderPreview([]);
+
+    // Listeners
+    for (const t of picks) t.el.addEventListener("change", onChange);
+    $("#btnRandom").addEventListener("click", randomFill);
+    $("#btnReset").addEventListener("click", resetAll);
+    $("#btnRank").addEventListener("click", rankAndSave);
+    $("#btnConfirmSend").addEventListener("click", confirmAndSend);
+
+    // Load saved picks if present
+    const saved = load();
+    if (saved) applyLoaded(saved);
+
+    // Optional test mode
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("test") === "1") {
+        $("#testHint").style.display = "block";
+        runTests();
+      }
+    } catch {
+      // ignore
+    }
+  </script>
+</body>
+</html>
